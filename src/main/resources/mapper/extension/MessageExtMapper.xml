@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--命名空间一定要与源（自动生成的Mappertaining.XML相同）-->
+<mapper namespace="com.example.demo.dao.MessageMapper">
+<!--  自定义结果集映射-->
+  <resultMap id="AllInfoResultMap" type="com.example.demo.model.Message" extends="BaseResultMap">
+<!--    关联发送者对象-->
+    <association property="postUser" resultMap="com.example.demo.dao.UserMapper.BaseResultMap"
+                 columnPrefix="u_"/>
+  </resultMap>
+<!--根据用户id查询该用户未读数量-->
+  <select id="selectUnreadCount" parameterType="java.lang.Long" resultType="java.lang.Integer">
+    select count(*) from t_message
+    WHERE state = 0
+    and deleteState = 0
+    and receiveUserId = #{receiveUserId,jdbcType=BIGINT}
+  </select>
+<!--  根据接收者用户id查询站内信列表-->
+  <select id="selectByReceiveUserId" parameterType="java.lang.Long" resultMap="AllInfoResultMap">
+    select
+    u.id as u_id,
+    u.nickname as u_nickname,
+    u.gender as u_gender,
+    u.avatarUrl as u_avatarUrl,
+    m.id,
+    m.postUserId,
+    m.receiveUserId,
+    m.content,
+    m.state,
+    m.createTime,
+    m.updateTime
+    from
+    t_message as m,
+    t_user as u
+    where
+    m.postUserId = u.id and
+    m.deleteState = 0 and
+    m.receiveUserId = #{receiveUserId,jdbcType=BIGINT}
+    order by m.createTime desc,m.state asc;
+  </select>
+</mapper>

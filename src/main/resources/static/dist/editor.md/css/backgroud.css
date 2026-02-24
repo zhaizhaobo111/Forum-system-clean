@@ -1,0 +1,6 @@
+body {
+   background-image: url('../../image/avatar05.jpg'); /* 设置背景图片 */
+   background-size: cover; /* 图片覆盖整个容器 */
+   background-repeat: no-repeat; /* 不重复 */
+   background-position: center; /* 居中显示 */
+}
