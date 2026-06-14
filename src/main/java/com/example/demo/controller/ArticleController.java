@@ -189,4 +189,12 @@ public class ArticleController {
         List<Article> articles = articleService.selectByUserId(userId);
         return AppResult.success(articles);
     }
+
+    @ApiOperation("生成帖子智能摘要")
+    @PostMapping("/generateSummary")
+    public AppResult generateSummary(
+            @ApiParam("帖子Id") @RequestParam("id") @NonNull Long id) {
+        articleService.generateSummary(id);
+        return AppResult.success();
+    }
 }

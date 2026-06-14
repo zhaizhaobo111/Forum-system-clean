@@ -46,4 +46,6 @@ public interface ArticleMapper {
      * @return 帖子列表
      */
     List<Article>selectByUserId(@Param("userId") Long userId);
+
+    int updateSummaryById(@Param("id") Long id, @Param("summary") String summary);
 }

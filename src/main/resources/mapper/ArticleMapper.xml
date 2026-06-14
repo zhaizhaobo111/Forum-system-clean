@@ -16,6 +16,7 @@
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.example.demo.model.Article">
     <result column="content" jdbcType="LONGVARCHAR" property="content" />
+    <result column="summary" jdbcType="VARCHAR" property="summary" />
   </resultMap>
   <sql id="Base_Column_List">
     id, boardId, userId, title, visitCount, replyCount, likeCount, state, deleteState, 
@@ -190,5 +191,10 @@
       createTime = #{createTime,jdbcType=TIMESTAMP},
       updateTime = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateSummaryById">
+    UPDATE t_article
+    SET summary = #{summary}
+    WHERE id = #{id}
   </update>
 </mapper>

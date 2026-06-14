@@ -29,11 +29,19 @@ public class Article {
     private Date updateTime;
 
     private String content;
+    // 新增：智能摘要
+    private String  summary;  
 
     private User user;
 
     private  Board board;
     @ApiModelProperty("是否作者")
     private Boolean Own;
+    public String getSummary() {
+        return summary;
+    }
 
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
 }

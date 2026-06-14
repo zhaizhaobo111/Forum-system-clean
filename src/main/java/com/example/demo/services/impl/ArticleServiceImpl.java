@@ -1,5 +1,5 @@
 package com.example.demo.services.impl;
-
+import com.example.demo.services.AiService;
 import com.example.demo.common.AppResult;
 import com.example.demo.common.ResultCode;
 import com.example.demo.dao.ArticleMapper;
@@ -28,6 +28,8 @@ import java.util.List;
 public class ArticleServiceImpl implements IArticleService {
     @Resource
     private ArticleMapper articleMapper;
+    @Resource
+    private AiService aiService;
     //用户和板块的操作
     @Resource
     private IBoradService boradService;
@@ -254,7 +256,30 @@ public class ArticleServiceImpl implements IArticleService {
         List<Article> articles = articleMapper.selectByUserId(userId);
         return articles;
     }
+    @Override
+    public void generateSummary(Long id) {
+        if (id == null || id <= 0) {
+            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
+        }
 
+        // 获取帖子详情
+        Article article = articleMapper.selectByPrimaryKey(id);
+        if (article == null || article.getDeleteState() == 1) {
+            log.warn(ResultCode.FAILED_ARTICLE_NOT_EXISTS.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_ARTICLE_NOT_EXISTS));
+        }
+
+        // 调用AI服务生成摘要
+        String summary = aiService.generateSummary(article.getContent());
+
+        // 更新帖子摘要
+        int row = articleMapper.updateSummaryById(id, summary);
+        if (row != 1) {
+            log.warn(ResultCode.ERROR_SERVICES.toString());
+            throw new ApplicationException(AppResult.failed(ResultCode.ERROR_SERVICES));
+        }
+    }
 
 }
 

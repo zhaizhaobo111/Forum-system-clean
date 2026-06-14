@@ -155,6 +155,13 @@
           article.user.avatarUrl = avatarUrl;
         }
         // 构造HTML
+        let summaryHtml = '';
+        if (article.summary && article.summary.trim() !== '') {
+          summaryHtml = '<div class="text-muted small mb-2" style="max-width: 600px;">'
+            + '<span class="badge bg-blue-lt me-1">📌 AI摘要</span>'
+            + article.summary
+            + '</div>';
+        }
         let articleHtmlStr = '<div>'
           + ' <div class="row">'
           + ' <div class="col-auto">'
@@ -165,7 +172,11 @@
           + ' <a href="javascript:void(0);" class="article_list_a_title">'
           + ' <strong>' + article.title + '</strong>'
           + ' </a>'
+          + ' <button class="btn btn-sm btn-outline-primary ms-2 ai-summary-btn" data-id="' + article.id + '">'
+          + ' 🤖 AI摘要'
+          + ' </button>'
           + ' </div>'
+          + summaryHtml
           + ' <div class="text-muted mt-2">'
           + ' <div class="row">'
           + ' <div class="col">'
@@ -261,6 +272,43 @@
       console.log('加载发贴页面');
       removeNavActive();
       $('#bit-forum-content').load('article.html');
+    });
+
+    // ================== 处理AI摘要按钮点击事件 =====================
+    $(document).on('click', '.ai-summary-btn', function() {
+      let btn = $(this);
+      let articleId = btn.data('id');
+      let summaryDiv = $('#summary-' + articleId);
+
+      // 如果已经显示摘要，则隐藏
+      if (summaryDiv.is(':visible')) {
+        summaryDiv.hide();
+        btn.html('🤖 AI摘要');
+        return;
+      }
+
+      // 显示加载中
+      btn.prop('disabled', true).html('⏳ 生成中...');
+      summaryDiv.html('<span class="text-muted">正在生成AI摘要...</span>').show();
+
+      // 调用后端API生成摘要
+      $.ajax({
+        type: 'post',
+        url: 'article/generateSummary?id=' + articleId,
+        success: function(respData) {
+          if (respData.code == 0) {
+            // 重新加载页面显示摘要
+            location.reload();
+          } else {
+            summaryDiv.html('<span class="text-danger">生成失败：' + respData.message + '</span>');
+            btn.prop('disabled', false).html('🤖 AI摘要');
+          }
+        },
+        error: function() {
+          summaryDiv.html('<span class="text-danger">请求失败</span>');
+          btn.prop('disabled', false).html('🤖 AI摘要');
+        }
+      });
     });
 
   });

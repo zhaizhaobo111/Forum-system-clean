@@ -66,4 +66,9 @@ public interface IArticleService {
      * @return 帖子列表
      */
     List<Article>selectByUserId(Long userId);
+    void generateSummary(Long id);
+    /**
+     *   生成帖子智能摘要
+     */
+
 }
