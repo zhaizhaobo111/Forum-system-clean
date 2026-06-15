@@ -157,9 +157,12 @@
         // 构造HTML
         let summaryHtml = '';
         if (article.summary && article.summary.trim() !== '') {
-          summaryHtml = '<div class="text-muted small mb-2" style="max-width: 600px;">'
-            + '<span class="badge bg-blue-lt me-1">📌 AI摘要</span>'
+          summaryHtml = '<div class="mb-2" style="max-width: 600px;">'
+            + '<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 12px; border-radius: 8px; font-size: 13px; line-height: 1.5;">'
+            + '<span style="margin-right: 6px;">🤖</span>'
+            + '<strong>AI摘要：</strong> '
             + article.summary
+            + '</div>'
             + '</div>';
         }
         let articleHtmlStr = '<div>'

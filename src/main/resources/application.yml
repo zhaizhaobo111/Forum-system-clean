@@ -17,6 +17,13 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss # 日期格式
     default-property-inclusion: NON_NULL # 不为null时序列化
 
+  # Redis配置
+  redis:
+    host: 127.0.0.1 # Redis服务器地址
+    port: 6379 # Redis端口号
+    database: 0 # 使用默认数据库
+    timeout: 10000ms # 连接超时时间
+
 server:
   port: 58080 # 自定义服务端口号
 

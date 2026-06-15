@@ -16,12 +16,15 @@ import com.mysql.cj.log.Log;
 import com.mysql.cj.log.NullLogger;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -35,6 +38,8 @@ public class ArticleServiceImpl implements IArticleService {
     private IBoradService boradService;
     @Resource
     private IUserService userService;
+    @Resource
+    private RedisTemplate<String, String> redisTemplate;
     @Override
     public void create(Article article) {
         if(article==null||article.getUserId()==null
@@ -257,27 +262,47 @@ public class ArticleServiceImpl implements IArticleService {
         return articles;
     }
     @Override
+    @Async
     public void generateSummary(Long id) {
-        if (id == null || id <= 0) {
-            log.warn(ResultCode.FAILED_PARAMS_VALIDATE.toString());
-            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_PARAMS_VALIDATE));
-        }
+        try {
+            if (id == null || id <= 0) {
+                log.warn("生成摘要失败：ID无效 id={}", id);
+                return;
+            }
 
-        // 获取帖子详情
-        Article article = articleMapper.selectByPrimaryKey(id);
-        if (article == null || article.getDeleteState() == 1) {
-            log.warn(ResultCode.FAILED_ARTICLE_NOT_EXISTS.toString());
-            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_ARTICLE_NOT_EXISTS));
-        }
+            // 检查缓存中是否有摘要
+            String cacheKey = "article:summary:" + id;
+            String cachedSummary = redisTemplate.opsForValue().get(cacheKey);
+            if (cachedSummary != null && !cachedSummary.isEmpty()) {
+                log.info("从缓存获取摘要：id={}, summary={}", id, cachedSummary);
+                return;
+            }
 
-        // 调用AI服务生成摘要
-        String summary = aiService.generateSummary(article.getContent());
+            // 获取帖子详情
+            Article article = articleMapper.selectByPrimaryKey(id);
+            if (article == null || article.getDeleteState() == 1) {
+                log.warn("生成摘要失败：帖子不存在 id={}", id);
+                return;
+            }
 
-        // 更新帖子摘要
-        int row = articleMapper.updateSummaryById(id, summary);
-        if (row != 1) {
-            log.warn(ResultCode.ERROR_SERVICES.toString());
-            throw new ApplicationException(AppResult.failed(ResultCode.ERROR_SERVICES));
+            // 调用AI服务生成摘要
+            log.info("开始生成摘要：id={}, title={}", id, article.getTitle());
+            String summary = aiService.generateSummary(article.getContent());
+            log.info("摘要生成成功：id={}, summary={}", id, summary);
+
+            // 保存到缓存（设置24小时过期）
+            redisTemplate.opsForValue().set(cacheKey, summary, 24, TimeUnit.HOURS);
+            log.info("摘要已保存到缓存：id={}", id);
+
+            // 更新帖子摘要
+            int row = articleMapper.updateSummaryById(id, summary);
+            if (row != 1) {
+                log.error("更新摘要失败：id={}", id);
+            } else {
+                log.info("摘要更新成功：id={}", id);
+            }
+        } catch (Exception e) {
+            log.error("生成摘要异常：id={}", id, e);
         }
     }
 
