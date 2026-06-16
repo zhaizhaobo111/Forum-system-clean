@@ -1,0 +1,54 @@
+/* AI Community 智能技术社区 - 仅背景样式 */
+
+/* 深色科技风背景 */
+body {
+    background:
+        radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.15), transparent 30%),
+        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.12), transparent 35%),
+        linear-gradient(135deg, #050816 0%, #0b1020 50%, #0f172a 100%) !important;
+    background-attachment: fixed;
+}
+
+/* 低透明度网格纹理 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* 柔和光晕效果 */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.08), transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.06), transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(217, 70, 239, 0.04), transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+    animation: glow 8s ease-in-out infinite;
+}
+
+@keyframes glow {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+/* 发光粒子装饰（可选） */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}

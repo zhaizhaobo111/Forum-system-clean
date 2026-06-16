@@ -7,21 +7,51 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <link rel="shortcut icon" href="/favicon1.ico">
-  <title>一个论坛 - 用户注册</title>
+  <title>AI Community - 用户注册</title>
   <!-- 导入CSS -->
   <link href="./dist/css/tabler.min.css?1674944402" rel="stylesheet" />
   <link rel="stylesheet" href="./dist/css/jquery.toast.css">
-  <!-- 设置字体 -->
-  <!-- <style>
-      @import url('https://rsms.me/inter/inter.css');
-      :root {
-      	--tblr-font-sans-serif: 'Inter Var', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
-      }
-      body {
-      	font-feature-settings: "cv03", "cv04", "cv11";
-      }
-    </style> -->
-    
+  <link rel="stylesheet" href="css/ai-community.css">
+  <style>
+    /* 注册页面特殊样式 */
+    body {
+      background:
+        radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.15), transparent 30%),
+        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.12), transparent 35%),
+        linear-gradient(135deg, #050816 0%, #0b1020 50%, #0f172a 100%) !important;
+      background-attachment: fixed;
+    }
+
+    .signup-card {
+      background: rgba(255, 255, 255, 0.03) !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border-radius: 16px !important;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .signup-title {
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #d946ef 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+    }
+
+    .signup-btn {
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%) !important;
+      border: none !important;
+      border-radius: 8px !important;
+      padding: 12px 24px !important;
+      font-weight: 500 !important;
+      transition: all 0.3s ease !important;
+    }
+
+    .signup-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+    }
+  </style>
 </head>
 
 <body class="d-flex flex-column">
@@ -29,11 +59,12 @@
   <div class="page page-center">
     <div class="container container-tight py-4">
       <div class="text-center mb-4">
-        <img src="./image\forum.png" height="50" alt="">
+        <h1 class="signup-title" style="font-size: 2rem;">AI Community</h1>
+        <p style="color: #8b8b9e;">智能技术社区</p>
       </div>
-      <form id="signUpForm" class="card card-md" autocomplete="off" novalidate>
+      <form id="signUpForm" class="signup-card card card-md" autocomplete="off" novalidate>
         <div class="card-body">
-          <h2 class="text-center mb-4">用户注册</h2>
+          <h2 class="text-center mb-4 signup-title">用户注册</h2>
           <!-- 用户名 -->
           <div class="mb-3">
             <label class="form-label required">用户名</label>
@@ -95,7 +126,7 @@
             </label>
           </div>
           <div class="form-footer">
-            <button type="button" class="btn btn-primary w-100" id="submit">注册</button>
+            <button type="button" class="btn signup-btn w-100" id="submit">注册</button>
           </div>
         </div>
       </form>

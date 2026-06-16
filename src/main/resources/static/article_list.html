@@ -1,55 +1,88 @@
-<!-- Page header -->
-<div class="page-header d-print-none">
-  <div class="container-xl">
-    <div class="row g-2 align-items-center">
-      <div class="col">
-        <!-- Page pre-title -->
-        <!-- <div class="page-pretitle">
-          子标题
-        </div> -->
-        <h2 class="page-title" id="article_list_board_title">
-          首页
-        </h2>
-        <!-- 帖子数量 -->
-        <div class="text-muted mt-1" id="article_list_count_board"></div>
-      </div>
-      <!-- Page title actions -->
-      <div class="col-auto ms-auto d-print-none">
-        <div class="btn-list">
-          <!-- 发新帖按钮 宽屏 -->
-          <a  href="javascript:void(0);" class="btn btn-primary d-none d-sm-inline-block article_post">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
-              stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M12 5l0 14" />
-              <path d="M5 12l14 0" />
-            </svg>
-            发布帖子
-          </a>
-          <!-- 发新帖按钮 窄屏 -->
-          <a href="javascript:void(0);" class="btn btn-primary d-sm-none btn-icon article_post" aria-label="发布帖子">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
-              stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M12 5l0 14" />
-              <path d="M5 12l14 0" />
-            </svg>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 <!-- Page body -->
 <div class="page-body">
   <div class="container-xl">
-    <div class="row justify-content-center">
-      <!-- 显示列表的宽度 -->
+    <!-- 品牌宣传区 - 星空背景 -->
+    <div class="row mb-4">
       <div class="col-12">
-        <div class="card">
-          <div class="card-body">
+        <div class="hero-banner" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(139, 92, 246, 0.15) 50%, rgba(217, 70, 239, 0.1) 100%); border-radius: 16px; padding: 60px 40px; text-align: center; position: relative; overflow: hidden;">
+          <!-- 背景光效 -->
+          <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.3), transparent 50%); pointer-events: none;"></div>
+          <div style="position: absolute; top: 0; right: 0; width: 100%; height: 100%; background: radial-gradient(circle at 70% 70%, rgba(139, 92, 246, 0.2), transparent 50%); pointer-events: none;"></div>
+          <!-- 内容 -->
+          <div style="position: relative; z-index: 1;">
+            <h1 style="color: #fff; font-size: 2.5rem; font-weight: 700; margin-bottom: 15px;">欢迎来到 AI 智能社区</h1>
+            <p style="color: #8b8b9e; font-size: 1.1rem; margin-bottom: 30px;">探索、学习、分享最新AI技术与经验</p>
+            <button class="btn btn-primary btn-lg" onclick="showAiAssistant()" style="padding: 12px 40px; font-size: 1.1rem;">
+              ✨ 开始探索
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- 左侧：最新讨论（占比大） -->
+      <div class="col-lg-8">
+        <div class="card mb-4">
+          <div class="card-header">
+            <h3 class="card-title">💬 最新讨论</h3>
+            <a href="javascript:void(0);" class="card-title-link">更多推荐 ›</a>
+          </div>
+          <div class="card-body p-0">
             <div class="divide-y" id="artical-items-body">
               <!-- 动态生成帖子列表 -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右侧：AI推荐 + 今日热门 -->
+      <div class="col-lg-4">
+        <!-- AI推荐 -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h3 class="card-title">🤖 AI 推荐</h3>
+          </div>
+          <div class="card-body">
+            <div class="d-flex align-items-center mb-3">
+              <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                <span style="font-size: 40px;">🤖</span>
+              </div>
+              <div>
+                <p style="color: #8b8b9e; margin-bottom: 5px;">你好！我是AI助手</p>
+                <p style="color: #fff; font-weight: 500;">有什么可以帮你的？</p>
+              </div>
+            </div>
+            <button class="btn btn-primary w-100" onclick="showAiAssistant()">✨ 开始对话</button>
+          </div>
+        </div>
+
+        <!-- 热门标签 -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h3 class="card-title">🏷️ 热门标签</h3>
+          </div>
+          <div class="card-body">
+            <div class="d-flex flex-wrap gap-2">
+              <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; padding: 6px 12px; border-radius: 20px;">Java</span>
+              <span class="badge" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6; padding: 6px 12px; border-radius: 20px;">Python</span>
+              <span class="badge" style="background: rgba(217, 70, 239, 0.15); color: #d946ef; padding: 6px 12px; border-radius: 20px;">AI</span>
+              <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; padding: 6px 12px; border-radius: 20px;">LangChain</span>
+              <span class="badge" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6; padding: 6px 12px; border-radius: 20px;">Spring Boot</span>
+              <span class="badge" style="background: rgba(217, 70, 239, 0.15); color: #d946ef; padding: 6px 12px; border-radius: 20px;">MySQL</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 今日热门 -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h3 class="card-title">🔥 今日热门</h3>
+            <a href="javascript:void(0);" class="card-title-link">更多推荐 ›</a>
+          </div>
+          <div class="card-body p-0">
+            <div class="list-group list-group-flush" id="hot-posts">
+              <!-- 动态生成热门帖子 -->
             </div>
           </div>
         </div>
@@ -68,7 +101,7 @@
     let boardData = activeLiEl.data('board');
     // 导航栏版块Item是否绑定版块数据
     if (boardData) {
-      // 构造query string 
+      // 构造query string
       queryString = '?boardId=' + boardData.id;
       // 获取版块信息
       getBoardInfo(boardData.id);
@@ -77,6 +110,38 @@
       $('#article_list_board_title').html('首页');
       $('#article_list_count_board').hide();
     }
+
+    // ========================= 加载今日热门帖子 =======================
+    function loadHotPosts(data) {
+      if (data.length === 0) return;
+      // 按访问量排序，取前5个
+      let hotPosts = data.sort((a, b) => b.visitCount - a.visitCount).slice(0, 5);
+      let html = '';
+      hotPosts.forEach((post, index) => {
+        html += '<a href="javascript:void(0);" class="list-group-item list-group-item-action article_list_a_title" '
+          + 'style="background: transparent; border-color: var(--border-color);">'
+          + '<div class="d-flex align-items-center gap-2">'
+          + '<span class="text-muted">' + (index + 1) + '</span>'
+          + '<div>'
+          + '<div class="article-title" style="font-size: 14px;">' + post.title + '</div>'
+          + '<small class="text-muted">👁️ ' + post.visitCount + '</small>'
+          + '</div>'
+          + '</div>'
+          + '</a>';
+      });
+      $('#hot-posts').html(html);
+    }
+
+    // 初始加载热门帖子
+    $.ajax({
+      type: 'get',
+      url: 'article/getAllByBoardId',
+      success: function(respData) {
+        if (respData.code == 0) {
+          loadHotPosts(respData.data);
+        }
+      }
+    });
 
     // ========================= 获取版块信息 =======================
     // 
