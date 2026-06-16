@@ -48,3 +48,8 @@ one-forum:
     url: sign-in.html # 未登录状况下强制跳转页面
   index: # 首页配置节点
     board-num: 9 # 首页中显示的版块个数
+
+# 头像配置
+avatar:
+  default-path: D:\\桌面\\截图.jpg # 默认头像路径
+  upload-path: D:\\avatar\\ # 用户头像上传路径

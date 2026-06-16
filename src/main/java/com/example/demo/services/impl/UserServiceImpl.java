@@ -284,4 +284,27 @@ public class UserServiceImpl implements IUserService {
         userMapper.updateByPrimaryKeySelective(modifyUser);
         log.info("用户密码修改成功：" + user.getUsername());
     }
+
+    @Override
+    public void updateAvatarUrl(Long id, String avatarUrl) {
+        // 1. 根据用户Id查询用户信息
+        User user = userMapper.selectByPrimaryKey(id);
+        // 2. 校验用户Id是否有存在
+        if (user == null) {
+            log.info(ResultCode.FAILED_UNAUTHORIZED.toString() + "user id = " + id);
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED_UNAUTHORIZED));
+        }
+        // 3. 创建用于更新的User对象
+        User updateUser = new User();
+        updateUser.setId(id);
+        updateUser.setAvatarUrl(avatarUrl);
+        updateUser.setUpdateTime(new Date());
+        // 4. 更新操作
+        int row = userMapper.updateByPrimaryKeySelective(updateUser);
+        if (row != 1) {
+            log.warn("更新头像失败：userId={}", id);
+            throw new ApplicationException(AppResult.failed(ResultCode.FAILED));
+        }
+        log.info("头像更新成功：userId={}", id);
+    }
 }

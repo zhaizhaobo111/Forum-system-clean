@@ -310,6 +310,88 @@
     $('#settings_input_chooiceAvatar').click();
   }
 
+  // ================= 处理头像上传事件 =================
+  $('#settings_input_chooiceAvatar').change(function() {
+    let file = this.files[0];
+    if (!file) {
+      return;
+    }
+
+    // 检查文件类型
+    let allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    if (!allowedTypes.includes(file.type)) {
+      $.toast({
+        heading: '提示',
+        text: '只支持JPG、JPEG、PNG格式',
+        icon: 'warning'
+      });
+      return;
+    }
+
+    // 检查文件大小（最大2MB）
+    if (file.size > 2 * 1024 * 1024) {
+      $.toast({
+        heading: '提示',
+        text: '文件大小不能超过2MB',
+        icon: 'warning'
+      });
+      return;
+    }
+
+    // 创建FormData对象
+    let formData = new FormData();
+    formData.append('file', file);
+
+    // 显示上传中提示
+    $.toast({
+      heading: '上传中',
+      text: '正在上传头像...',
+      icon: 'info'
+    });
+
+    // 上传头像
+    $.ajax({
+      type: 'post',
+      url: 'avatar/upload',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(respData) {
+        if (respData.code == 0) {
+          // 上传成功，更新头像显示
+          let userId = $('#settings_user_id').val();
+          let newAvatarUrl = '/Get_avatar?userId=' + userId + '&t=' + new Date().getTime();
+          $('#settings_avatar').css('background-image', 'url(' + newAvatarUrl + ')');
+
+          // 更新导航栏头像
+          $('#index_nav_avatar').css('background-image', 'url(' + newAvatarUrl + ')');
+
+          $.toast({
+            heading: '成功',
+            text: '头像上传成功',
+            icon: 'success'
+          });
+        } else {
+          $.toast({
+            heading: '失败',
+            text: respData.message || '上传失败',
+            icon: 'error'
+          });
+        }
+      },
+      error: function() {
+        $.toast({
+          heading: '错误',
+          text: '上传失败，请稍后重试',
+          icon: 'error'
+        });
+      }
+    });
+
+    // 清空文件选择
+    $(this).val('');
+  });
+
   // ================= 修改用户昵称 =================
   $('#setting_submit_nickname').click(function(){
     // 获取值

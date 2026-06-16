@@ -50,4 +50,29 @@ public class AiServiceImpl implements AiService {
             return false;
         }
     }
+
+    @Override
+    public Map<String, Object> agentWrite(String topic) {
+        String url = aiServiceUrl + "/api/ai/agent/write";
+
+        Map<String, String> request = new HashMap<>();
+        request.put("topic", topic);
+
+        try {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> response = restTemplate.postForObject(
+                    url, request, Map.class);
+
+            if (response != null && response.containsKey("title")) {
+                return response;
+            }
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", "AI发帖助手调用失败");
+            return error;
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", "AI服务调用失败：" + e.getMessage());
+            return error;
+        }
+    }
 }

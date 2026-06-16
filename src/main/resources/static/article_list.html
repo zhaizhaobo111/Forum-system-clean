@@ -292,7 +292,7 @@
 
       // 显示加载中
       btn.prop('disabled', true).html('⏳ 生成中...');
-      summaryDiv.html('<span class="text-muted">正在生成AI摘要...</span>').show();
+      summaryDiv.html('<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 12px; border-radius: 8px; font-size: 13px;"><span style="margin-right: 6px;">⏳</span>正在生成AI摘要，请稍候...</div>').show();
 
       // 调用后端API生成摘要
       $.ajax({
@@ -300,19 +300,67 @@
         url: 'article/generateSummary?id=' + articleId,
         success: function(respData) {
           if (respData.code == 0) {
-            // 重新加载页面显示摘要
-            location.reload();
+            // 开始轮询检查摘要是否生成完成
+            pollSummary(articleId, summaryDiv, btn);
           } else {
-            summaryDiv.html('<span class="text-danger">生成失败：' + respData.message + '</span>');
+            summaryDiv.html('<div style="background: #fee; color: #c00; padding: 8px 12px; border-radius: 8px; font-size: 13px;"><span style="margin-right: 6px;">❌</span>生成失败：' + respData.message + '</div>');
             btn.prop('disabled', false).html('🤖 AI摘要');
           }
         },
         error: function() {
-          summaryDiv.html('<span class="text-danger">请求失败</span>');
+          summaryDiv.html('<div style="background: #fee; color: #c00; padding: 8px 12px; border-radius: 8px; font-size: 13px;"><span style="margin-right: 6px;">❌</span>请求失败</div>');
           btn.prop('disabled', false).html('🤖 AI摘要');
         }
       });
     });
+
+    // 轮询检查摘要是否生成完成
+    function pollSummary(articleId, summaryDiv, btn) {
+      let checkCount = 0;
+      let maxChecks = 30; // 最多检查30次（30秒）
+
+      let checkInterval = setInterval(function() {
+        checkCount++;
+
+        // 获取帖子详情，检查摘要是否生成
+        $.ajax({
+          type: 'get',
+          url: 'article/getAllByBoardId',
+          success: function(respData) {
+            if (respData.code == 0) {
+              // 找到当前帖子
+              let article = respData.data.find(a => a.id == articleId);
+              if (article && article.summary && article.summary.trim() !== '') {
+                // 摘要已生成，停止轮询
+                clearInterval(checkInterval);
+
+                // 直接显示摘要
+                summaryDiv.html('<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 12px; border-radius: 8px; font-size: 13px; line-height: 1.5;"><span style="margin-right: 6px;">🤖</span><strong>AI摘要：</strong> ' + article.summary + '</div>');
+
+                // 恢复按钮状态
+                btn.prop('disabled', false).html('🤖 AI摘要');
+
+                console.log('摘要生成完成：', article.summary);
+              } else if (checkCount >= maxChecks) {
+                // 超时，停止轮询
+                clearInterval(checkInterval);
+
+                summaryDiv.html('<div style="background: #fff3cd; color: #856404; padding: 8px 12px; border-radius: 8px; font-size: 13px;"><span style="margin-right: 6px;">⏳</span>生成时间较长，请稍后刷新页面查看</div>');
+
+                // 恢复按钮状态
+                btn.prop('disabled', false).html('🤖 AI摘要');
+              }
+            }
+          },
+          error: function() {
+            // 请求失败，停止轮询
+            clearInterval(checkInterval);
+            summaryDiv.html('<div style="background: #fee; color: #c00; padding: 8px 12px; border-radius: 8px; font-size: 13px;"><span style="margin-right: 6px;">❌</span>检查失败，请刷新页面查看</div>');
+            btn.prop('disabled', false).html('🤖 AI摘要');
+          }
+        });
+      }, 1000); // 每秒检查一次
+    }
 
   });
 </script>

@@ -32,7 +32,12 @@
         </div>
         <div class="mb-3">
           <label class="form-label"><strong>标题</strong></label>
-          <input id="article_post_title" type="text" class="form-control" placeholder="请输入标题">
+          <div class="input-group">
+            <input id="article_post_title" type="text" class="form-control" placeholder="请输入标题">
+            <button type="button" class="btn btn-success ai-generate-btn" id="ai_generate_btn">
+              🤖 AI生成
+            </button>
+          </div>
         </div>
         <div class="mb-3" style="height: 680px;">
           <label class="form-label"><strong>内容</strong></label>
@@ -84,6 +89,74 @@
       // sequenceDiagram: true,         // 开启时序/序列图支持，默认关闭,
       placeholder: '开始创作...',     // 占位符
       path: "./dist/editor.md/lib/"
+    });
+
+    // ================== 处理AI生成按钮事件 =======================
+    $('#ai_generate_btn').click(function () {
+      let topic = prompt('请输入文章主题关键词：', '');
+      if (!topic || topic.trim() === '') {
+        return;
+      }
+
+      let btn = $(this);
+      let originalText = btn.html();
+
+      // 显示加载中
+      btn.prop('disabled', true).html('⏳ 生成中...');
+      $.toast({
+        heading: 'AI生成',
+        text: '正在生成文章，请稍候...',
+        icon: 'info'
+      });
+
+      // 调用后端API
+      $.ajax({
+        type: 'post',
+        url: 'article/aiWrite',
+        data: { topic: topic },
+        success: function(respData) {
+          if (respData.code == 0) {
+            let data = respData.data;
+            // 填充标题（最多50字）
+            let title = data.title || '';
+            if (title.length > 50) {
+              title = title.substring(0, 50);
+            }
+            $('#article_post_title').val(title);
+
+            // 填充内容（最多50字）
+            let content = data.content || '';
+            if (content.length > 50) {
+              content = content.substring(0, 50) + '...';
+            }
+            // 设置编辑器内容
+            editor.setMarkdown(content);
+
+            $.toast({
+              heading: '成功',
+              text: 'AI生成完成！',
+              icon: 'success'
+            });
+          } else {
+            $.toast({
+              heading: '失败',
+              text: respData.message || '生成失败',
+              icon: 'error'
+            });
+          }
+
+          // 恢复按钮状态
+          btn.prop('disabled', false).html(originalText);
+        },
+        error: function() {
+          $.toast({
+            heading: '错误',
+            text: '请求失败，请稍后重试',
+            icon: 'error'
+          });
+          btn.prop('disabled', false).html(originalText);
+        }
+      });
     });
 
     // ================== 处理发贴按钮事件 =======================

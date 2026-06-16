@@ -6,6 +6,7 @@ import com.example.demo.common.ResultCode;
 import com.example.demo.model.Article;
 import com.example.demo.model.Board;
 import com.example.demo.model.User;
+import com.example.demo.services.AiService;
 import com.example.demo.services.IArticleService;
 import com.example.demo.services.IBoradService;
 import com.fasterxml.jackson.core.sym.Name3;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Api(tags = "文章接口")
 @Slf4j
@@ -32,6 +34,8 @@ public class ArticleController {
     private IArticleService articleService;
     @Resource
     private IBoradService boradService;
+    @Resource
+    private AiService aiService;
     /**
      * 发布新帖子
      * @param boardId 板块id
@@ -196,5 +200,21 @@ public class ArticleController {
             @ApiParam("帖子Id") @RequestParam("id") @NonNull Long id) {
         articleService.generateSummary(id);
         return AppResult.success();
+    }
+
+    @ApiOperation("AI发帖助手")
+    @PostMapping("/aiWrite")
+    public AppResult aiWrite(
+            @ApiParam("文章主题") @RequestParam("topic") @NonNull String topic) {
+        log.info("AI发帖助手：topic={}", topic);
+
+        // 调用AI服务生成文章
+        Map<String, Object> result = aiService.agentWrite(topic);
+
+        if (result.containsKey("error")) {
+            return AppResult.failed((String) result.get("error"));
+        }
+
+        return AppResult.success(result);
     }
 }

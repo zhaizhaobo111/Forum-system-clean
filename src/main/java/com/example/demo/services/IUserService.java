@@ -63,4 +63,11 @@ public interface IUserService {
      * @param oldPassword 旧密码
      */
     void modifyPassword(Long id,String newPassword, String oldPassword);
+
+    /**
+     * 更新用户头像URL
+     * @param id 用户id
+     * @param avatarUrl 头像URL
+     */
+    void updateAvatarUrl(Long id, String avatarUrl);
 }
